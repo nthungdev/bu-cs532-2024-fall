@@ -1,0 +1,2 @@
+mongoimport --uri="mongodb://localhost:27017" --db project2 --collection legislators --file legislators.json --jsonArray
+mongoimport --uri="mongodb://localhost:27017" --db project2 --collection executives --file executives.json --jsonArray
