@@ -2,9 +2,13 @@
 
 {% block content %}
   {% if query_list %}
-  <ul>
+  <h1 class="text-3xl">Queries</h1>
+
+  <ul class="space-y-4">
     {% for query in query_list %}
-    <li>{{ query }}</li>
+    <li>
+      {% include 'app/components/query_card.html' with index=forloop.counter title=query.name description=query.description %}
+    </li>
     {% endfor %}
   </ul>
   {% else %}

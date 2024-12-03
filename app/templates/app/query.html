@@ -1,0 +1,13 @@
+{% extends "app/base.html" %}
+
+{% block content %}
+  <nav>
+    <a href="/" class="text-blue-500">Home</a>
+  </nav>
+
+  <h1 class="text-3xl">Query {{ query_index }} Result</h1>
+
+  <div class="p-4 border rounded-md bg-blue-50">
+    {{ result }}
+  </div>
+{% endblock %}
