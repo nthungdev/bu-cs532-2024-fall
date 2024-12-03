@@ -17,4 +17,13 @@ query_descriptions = {
 }
 
 def query_1():
+    # TODO Implement query 1
     return 'query_1 result'
+
+
+def query_2():
+    # TODO Implement query 2
+    return 'query_2 result'
+
+
+# TODO Implement remaining queries
