@@ -1,10 +1,7 @@
-import importlib
 from django.shortcuts import render
 
 from app.models import Executive
-
-module_name = 'app.queries'
-queries_module = importlib.import_module(module_name)
+import app.utils as utils
 
 
 def index(request):
@@ -12,16 +9,8 @@ def index(request):
 
     query_list = []
     for i in range(1, 16):
-        query = None
-        description = 'None'
-        try:
-            query = getattr(queries_module, f'query_{i}')
-            descriptions = getattr(queries_module, 'query_descriptions')
-            description = descriptions.get(i, 'None')
-        except AttributeError:
-            print(f"Function query_{i} does not exist in the module {module_name}")
-        except Exception as e:
-            print(f"An error occurred: {e}")
+        query = utils.get_query_fn(i)
+        description = utils.get_query_description(i)
 
         def query_fn():
             def wrapped():
@@ -48,13 +37,12 @@ def index(request):
 def query(request, query_index):
     print(f'query {query_index}')
 
-    query = None
+    query = utils.get_query_fn(query_index)
     result = None
     try:
-        query = getattr(queries_module, f'query_{query_index}')
         result = query()
     except AttributeError:
-        print(f"Function query_{query_index} does not exist in the module {module_name}")
+        print(f"Function query_{query_index} does not exist")
     except Exception as e:
         print(f"An error occurred: {e}")
 
