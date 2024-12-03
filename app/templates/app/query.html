@@ -5,9 +5,15 @@
     <a href="/" class="text-blue-500">Home</a>
   </nav>
 
-  <h1 class="text-3xl">Query {{ query_index }} Result</h1>
+  <h1 class="text-3xl">Query {{ query_index }}</h1>
+
+  <p class="text-gray-800">{{ description }}</p>
+
+  <h2 class="text-2xl">Result</h2>
 
   <div class="p-4 border rounded-md bg-blue-50">
-    {{ result }}
+    <code>
+      {{ result }}
+    </code>
   </div>
 {% endblock %}

@@ -38,6 +38,7 @@ def query(request, query_index):
     print(f'query {query_index}')
 
     query = utils.get_query_fn(query_index)
+    description = utils.get_query_description(query_index)
     result = None
     try:
         result = query()
@@ -48,6 +49,7 @@ def query(request, query_index):
 
     context = {
         "result": result,
-        "query_index": query_index
+        "query_index": query_index,
+        "description": description,
     }
     return render(request, "app/query.html", context)
