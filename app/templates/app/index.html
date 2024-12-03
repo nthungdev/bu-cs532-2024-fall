@@ -1,0 +1,13 @@
+{% extends "app/base.html" %}
+
+{% block content %}
+  {% if query_list %}
+  <ul>
+    {% for query in query_list %}
+    <li>{{ query }}</li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p>No queries are available.</p>
+  {% endif %}
+{% endblock %}
