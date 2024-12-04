@@ -17,6 +17,3 @@ db.executives.aggregate([
     }
 ]);
 
-    // Unwind the terms array to process each term individually
-    // Group by party and count the number of terms
-// Sort by total terms in descending order

@@ -13,8 +13,14 @@ def execute():
         },
         {
             "$match": {
-                "terms.type": "viceprez",
-                "terms.how": "appointment"
+                "terms.type": "viceprez"
+            }
+        },
+        {
+            "$match": {
+                "terms.how": { 
+                    "$ne": "election"
+                }
             }
         },
         {

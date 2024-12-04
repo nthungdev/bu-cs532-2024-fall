@@ -34,9 +34,9 @@ def execute():
                         "$match": {
                             "$expr": {
                                 "$and": [
-                                    { "$gte": ["$terms.end", "$$vpStart"] },
-                                    { "$lte": ["$terms.start", "$$vpEnd"] },
-                                    { "$eq": ["$terms.party", "$$vpParty"] }
+                                    { "$lte": [ "$terms.start", "$$vpStart" ] }, 
+                                    { "$lte": [ "$$vpEnd", "$terms.end" ] }, 
+                                    { "$eq": [ "$terms.party", "$$vpParty" ] } 
                                 ]
                             }
                         }
