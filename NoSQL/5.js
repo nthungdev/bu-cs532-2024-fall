@@ -2,25 +2,34 @@ use("project2");
 
 db.executives.aggregate([
   {
-    $unwind: "$terms" 
+    $unwind: "$terms"
   },
   {
-    $match: { 
-      "terms.type": "prez", 
-      "terms.how": "succession" 
+    $match: {
+      "terms.type": "prez",
+      "terms.how": "succession"
+    }
+  },
+  {
+    $group: {
+      _id: "$name",
+      full_name: {
+        $first: {
+          $concat: [
+            "$name.first",
+            " ",
+            { $ifNull: ["$name.middle", ""] },
+            " ",
+            "$name.last"
+          ]
+        }
+      }
     }
   },
   {
     $project: {
-      _id: 0, 
-      full_name: { 
-        $concat: [ "$name.first", " ", { $ifNull: ["$name.middle", "" ] }, " ", "$name.last" ] 
-      }, 
-      start_date: "$terms.start", 
-      reason: "$terms.how" 
+      _id: 0,
+      full_name: 1
     }
-  },
-  {
-    $sort: { start_date: 1 } 
   }
 ]).toArray();
