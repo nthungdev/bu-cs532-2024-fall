@@ -18,7 +18,3 @@ db.executives.aggregate([
     }
 ]);
 
- // Match only U.S. presidents
-    // Lookup corresponding records in the legislators collection
-    // Match presidents who have no record in the legislators collection
-    // Project relevant details

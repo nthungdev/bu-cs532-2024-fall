@@ -35,9 +35,3 @@ db.executives.aggregate([
     }
 ]);
 
-    // Unwind the terms array to process each term individually
-    // Match only presidential terms
-    // Add a calculated field for the duration of each term in days
-    // Convert milliseconds to days
-    // Group by party and calculate the average term duration
-    // Sort by average duration in descending order

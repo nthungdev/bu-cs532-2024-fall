@@ -1,8 +1,6 @@
 use("project2");
 db.executives.aggregate([
-    // Unwind the terms array to process each term individually
     { $unwind: "$terms" },
-    // Group by individual to segregate terms by role
     {
         $group: {
             _id: { bioguide: "$id.bioguide", name: { $concat: ["$name.first", " ", "$name.last"] } },
@@ -18,7 +16,6 @@ db.executives.aggregate([
             }
         }
     },
-    // Filter out any nulls and ensure at least one match between president and vice president party affiliations
     {
         $project: {
             _id: 0,
@@ -28,8 +25,7 @@ db.executives.aggregate([
             sameParty: { $setIntersection: ["$prezParties", "$vpParties"] }
         }
     },
-    { $match: { "sameParty.0": { $exists: true } } }, // Ensure there's at least one common party
-    // Project final output
+    { $match: { "sameParty.0": { $exists: true } } }, 
     {
         $project: {
             name: 1,
