@@ -38,6 +38,7 @@ def query(request, query_index):
     query = utils.get_query_fn(query_index)
     description = utils.get_query_description(query_index)
     result = None
+    query_content = utils.get_query(query_index)
     try:
         result = query()
     except AttributeError as e:
@@ -47,6 +48,7 @@ def query(request, query_index):
         print(f"An error occurred: {e}")
 
     context = {
+        "query": query_content,
         "result": result,
         "query_index": query_index,
         "description": description,

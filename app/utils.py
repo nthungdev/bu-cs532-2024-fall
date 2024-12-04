@@ -55,6 +55,22 @@ def get_query_fn(index):
 
     return query
 
+def get_query(index):
+    # Define the path to the JSON file (query_{index}.js)
+    query_file_path = f'app/queries/query_{index}.js'
+    
+    # Check if the file exists
+    try:
+        with open(query_file_path, 'r') as file:
+            # Parse the JSON content from the file
+            query_data = json.load(file)
+            # Convert the entire JSON content to a string
+            query_content = json.dumps(query_data)
+            return query_content
+    except FileNotFoundError:
+        # Handle case where the file doesn't exist
+        return None
+
 
 def get_mongo():
     db_name = 'project2'
