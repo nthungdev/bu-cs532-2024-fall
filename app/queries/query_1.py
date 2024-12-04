@@ -1,7 +1,6 @@
 import app.utils as utils
 
-description = 'List all U.S. presidents with their full names and party affiliation.'
-
+description = 'List all U.S. presidents with their full names and party affiliation, sorted by their start date.'
 
 def execute():
     _, db = utils.get_mongo()
@@ -9,7 +8,7 @@ def execute():
     pipeline = [
         {
             "$unwind": {
-                "path": "$terms",
+                "path": "$terms"
             }
         },
         {
@@ -20,13 +19,13 @@ def execute():
         {
             "$project": {
                 "_id": 0,
-                "full_name": {
-                    "$concat": [
-                        "$name.first",
-                        " ",
-                        {"$ifNull": ["$name.middle", ""]},
-                        " ",
-                        "$name.last"
+                "full_name": { 
+                    "$concat": [ 
+                        "$name.first", 
+                        " ", 
+                        { "$ifNull": ["$name.middle", ""] }, 
+                        " ", 
+                        "$name.last" 
                     ]
                 },
                 "party": "$terms.party",
@@ -34,8 +33,8 @@ def execute():
             }
         },
         {
-            "$sort": {
-                "temp_start_date": 1
+            "$sort": { 
+                "temp_start_date": 1 
             }
         },
         {

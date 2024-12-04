@@ -2,6 +2,7 @@ import app.utils as utils
 
 description = 'Count the total number of U.S. presidents who were elected without party affiliation (party: "no party"), and display their names.'
 
+
 def execute():
     _, db = utils.get_mongo()
 
@@ -15,18 +16,15 @@ def execute():
         {
             "$group": {
                 "_id": None,
-                "count": { "$sum": 1 },
                 "names": {
-                    "$addToSet": {
-                        "$concat": ["$name.first", " ", "$name.last"]
-                    }
+                    "$addToSet": { "$concat": ["$name.first", " ", "$name.last"] }
                 }
             }
         },
         {
             "$project": {
                 "_id": 0,
-                "count": 1,
+                "count": { "$size": "$names" },
                 "names": 1
             }
         }

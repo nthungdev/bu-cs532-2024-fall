@@ -1,6 +1,6 @@
 import app.utils as utils
 
-description = 'List all presidents who came to power through succession.'
+description = 'List all presidents who came to power through succession, ensuring unique entries and without sorting.'
 
 def execute():
     _, db = utils.get_mongo()
@@ -16,24 +16,25 @@ def execute():
             }
         },
         {
-            "$project": {
-                "_id": 0,
+            "$group": {
+                "_id": "$name",  
                 "full_name": {
-                    "$concat": [
-                        "$name.first",
-                        " ",
-                        {"$ifNull": ["$name.middle", ""]},
-                        " ",
-                        "$name.last"
-                    ]
-                },
-                "start_date": "$terms.start",
-                "reason": "$terms.how"
+                    "$first": {
+                        "$concat": [
+                            "$name.first",
+                            " ",
+                            { "$ifNull": ["$name.middle", ""] },
+                            " ",
+                            "$name.last"
+                        ]
+                    }
+                }
             }
         },
         {
-            "$sort": {
-                "start_date": 1
+            "$project": {
+                "_id": 0,
+                "full_name": 1
             }
         }
     ]
