@@ -79,14 +79,14 @@ DATABASES = {
     #     "ENGINE": "django.db.backends.sqlite3",
     #     "NAME": BASE_DIR / "db.sqlite3",
     # }
-    "default": {
-        "ENGINE": "djongo",
-        "NAME": "project2",
-        "CLIENT": {
-            "host": "localhost",
-            "port": 27017,
-        }
-    }
+    # "default": {
+    #     "ENGINE": "djongo",
+    #     "NAME": "project2",
+    #     "CLIENT": {
+    #         "host": "localhost",
+    #         "port": 27017,
+    #     }
+    # }
 }
 
 # settings.py

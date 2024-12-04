@@ -1,7 +1,11 @@
+from pymongo import MongoClient
 import importlib
+import json
+from bson import json_util
 
 module_name = 'app.queries'
 queries = importlib.import_module(module_name)
+
 
 def get_query_description(index):
     """
@@ -31,3 +35,16 @@ def get_query_fn(index):
         print(f"An error occurred: {e}")
 
     return query
+
+
+def get_mongo():
+    db_name = 'project2'
+    client = MongoClient()
+    db = client[db_name]
+    return client, db
+
+
+def convert_to_pretty_string(mongo_docs):
+    # Convert the MongoDB documents list to a pretty JSON string
+    pretty_string = json.dumps(mongo_docs, indent=4, default=json_util.default)
+    return pretty_string

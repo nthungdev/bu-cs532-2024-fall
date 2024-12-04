@@ -1,3 +1,5 @@
+import app.utils as utils
+
 query_descriptions = {
     1: 'List all U.S. presidents with their full names and party affiliation.',
     2: 'List all unique parties represented by legislators.',
@@ -16,14 +18,108 @@ query_descriptions = {
     15: 'Identify all presidents and vice presidents who served terms under the same party affiliation in both roles.',
 }
 
+
 def query_1():
-    # TODO Implement query 1
-    return 'query_1 result'
+    _, db = utils.get_mongo()
+
+    pipeline = [
+        {
+            "$unwind": {
+                "path": "$terms",
+            }
+        },
+        {
+            "$match": {
+                "terms.type": "prez"
+            }
+        },
+        {
+            "$project": {
+                "_id": 0,
+                "full_name": {
+                    "$concat": [
+                        "$name.first",
+                        " ",
+                        {"$ifNull": ["$name.middle", ""]},
+                        " ",
+                        "$name.last"
+                    ]
+                },
+                "party": "$terms.party",
+                "temp_start_date": "$terms.start"
+            }
+        },
+        {
+            "$sort": {
+                "temp_start_date": 1
+            }
+        },
+        {
+            "$project": {
+                "full_name": 1,
+                "party": 1
+            }
+        }
+    ]
+
+    result = db.get_collection('executives').aggregate(pipeline)
+    output = utils.convert_to_pretty_string(list(result))
+    return output
+
+# TODO Implement remaining queries
 
 
 def query_2():
-    # TODO Implement query 2
     return 'query_2 result'
 
 
-# TODO Implement remaining queries
+def query_3():
+    return 'query_3 result'
+
+
+def query_4():
+    return 'query_4 result'
+
+
+def query_5():
+    return 'query_5 result'
+
+
+def query_6():
+    return 'query_6 result'
+
+
+def query_7():
+    return 'query_7 result'
+
+
+def query_8():
+    return 'query_8 result'
+
+
+def query_9():
+    return 'query_9 result'
+
+
+def query_10():
+    return 'query_10 result'
+
+
+def query_11():
+    return 'query_11 result'
+
+
+def query_12():
+    return 'query_12 result'
+
+
+def query_13():
+    return 'query_13 result'
+
+
+def query_14():
+    return 'query_14 result'
+
+
+def query_15():
+    return 'query_15 result'

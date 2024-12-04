@@ -1,12 +1,10 @@
 from django.shortcuts import render
 
-from app.models import Executive
+# from app.models import Executive
 import app.utils as utils
 
 
 def index(request):
-    executive = Executive.objects.first()
-
     query_list = []
     for i in range(1, 16):
         query = utils.get_query_fn(i)
@@ -42,7 +40,8 @@ def query(request, query_index):
     result = None
     try:
         result = query()
-    except AttributeError:
+    except AttributeError as e:
+        print(e)
         print(f"Function query_{query_index} does not exist")
     except Exception as e:
         print(f"An error occurred: {e}")
