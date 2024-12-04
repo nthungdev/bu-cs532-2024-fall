@@ -1,24 +1,30 @@
-use("project2");
+use('project2')
 
 db.executives.aggregate([
   {
-    $unwind: "$terms" 
+    $unwind: '$terms',
   },
   {
-    $match: { "terms.party": "no party" } 
+    $match: {
+      'terms.party': 'no party',
+      'terms.how': 'election',
+    },
   },
   {
     $group: {
-      _id: null, 
-      count: { $sum: 1 }, 
-      names: { $addToSet: { $concat: ["$name.first", " ", "$name.last"] } } 
-    }
+      _id: None,
+      names: {
+        $addToSet: {
+          $concat: ['$name.first', ' ', '$name.last'],
+        },
+      },
+    },
   },
   {
     $project: {
-      _id: 0, 
-      count: 1, 
-      names: 1 
-    }
-  }
-]);
+      _id: 0,
+      count: { $size: '$names' },
+      names: 1,
+    },
+  },
+])

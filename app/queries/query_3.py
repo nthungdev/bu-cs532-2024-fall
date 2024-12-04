@@ -11,20 +11,25 @@ def execute():
             "$unwind": "$terms"
         },
         {
-            "$match": { "terms.party": "no party" }
+            "$match": {
+                'terms.party': 'no party',
+                'terms.how': 'election',
+            },
         },
         {
             "$group": {
                 "_id": None,
                 "names": {
-                    "$addToSet": { "$concat": ["$name.first", " ", "$name.last"] }
+                    "$addToSet": {
+                        "$concat": ["$name.first", " ", "$name.last"]
+                    }
                 }
             }
         },
         {
             "$project": {
                 "_id": 0,
-                "count": { "$size": "$names" },
+                "count": {"$size": "$names"},
                 "names": 1
             }
         }
