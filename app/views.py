@@ -38,6 +38,8 @@ def query(request, query_index):
     query = utils.get_query_fn(query_index)
     description = utils.get_query_description(query_index)
     result = None
+    json_query = utils.get_query(query_index)
+    print(" query : ", json_query)
     try:
         result = query()
     except AttributeError as e:
@@ -47,6 +49,7 @@ def query(request, query_index):
         print(f"An error occurred: {e}")
 
     context = {
+        "json_query": json_query,
         "result": result,
         "query_index": query_index,
         "description": description,

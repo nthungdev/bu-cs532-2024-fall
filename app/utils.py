@@ -2,6 +2,7 @@ from pymongo import MongoClient
 import importlib
 import json
 from bson import json_util
+from pathlib import Path
 
 query_descriptions = {
     1: 'List all U.S. presidents with their full names and party affiliation.',
@@ -67,3 +68,24 @@ def convert_to_pretty_string(mongo_docs):
     # Convert the MongoDB documents list to a pretty JSON string
     pretty_string = json.dumps(mongo_docs, indent=4, default=json_util.default)
     return pretty_string
+
+
+def get_query(index):
+    
+    file_name = f'{index}.js'
+    
+    file_path = Path(f'app/NoSQL/{file_name}')
+
+    if not file_path.exists():
+        print(f"File {file_name} does not exist in the NoSQL folder.")
+        return None
+
+    try:
+        with open(file_path, 'r') as file:
+            file_content = file.read().strip()
+            query_str = file_content.split('=')[-1].strip().rstrip(';')
+            return query_str
+
+    except Exception as e:
+        print(f"An error occurred while reading {file_name}: {e}")
+        return None
