@@ -1,4 +1,4 @@
-use('project2')
+use("project2");
 db.executives.aggregate([
     { $unwind: '$terms' },
     { $match: { 'terms.type': 'viceprez' } },
@@ -16,9 +16,9 @@ db.executives.aggregate([
                     $match: {
                         $expr: {
                             $and: [
-                                { $lte: ['$terms.start', '$$vpStart'] },
-                                { $lte: ['$$vpEnd', '$terms.end'] },
                                 { $eq: ['$terms.party', '$$vpParty'] },
+                                { $gte: ['$terms.start', '$$vpStart'] }, // Legislator's term starts after or at the same time as VP's
+                                { $lte: ['$terms.end', '$$vpEnd'] }, // Legislator's term ends before or at the same time as VP's
                             ],
                         },
                     },
@@ -26,20 +26,21 @@ db.executives.aggregate([
                 {
                     $project: {
                         _id: 0,
-                        name: { $concat: ['$name.first', ' ', '$name.last'] },
+                        name: { $concat: [{ $trim: { input: { $concat: ['$name.first', ' ', '$name.last'] } } }] }, // Trim spaces
                     },
                 },
             ],
             as: 'matchingLegislators',
         },
     },
-    { $match: { matchingLegislators: { $ne: [] } } },
+    { $match: { matchingLegislators: { $ne: [] } } }, // Ensure that at least one legislator exists
+    { $unwind: '$matchingLegislators' }, // Unwind matchingLegislators to remove array structure
     {
         $group: {
             _id: {
                 name: { $concat: ['$name.first', ' ', '$name.last'] },
             },
-            matchingLegislators: { $addToSet: '$matchingLegislators.name' },
+            matchingLegislators: { $addToSet: '$matchingLegislators.name' }, // Ensure unique legislator names
         },
     },
     {

@@ -1,20 +1,16 @@
 import app.utils as utils
 
-description = 'List vice presidents and their unique matching legislators from the same party during overlapping terms.'
+description = 'List vice presidents and their matching legislators from the same party during overlapping terms.'
 
 def execute():
     _, db = utils.get_mongo()
 
     pipeline = [
-        {
-            "$unwind": {
-                "path": "$terms"
-            }
+        { 
+            "$unwind": "$terms" 
         },
-        {
-            "$match": {
-                "terms.type": "viceprez"
-            }
+        { 
+            "$match": { "terms.type": "viceprez" } 
         },
         {
             "$lookup": {
@@ -25,18 +21,14 @@ def execute():
                     "vpEnd": "$terms.end"
                 },
                 "pipeline": [
-                    {
-                        "$unwind": {
-                            "path": "$terms"
-                        }
-                    },
+                    { "$unwind": "$terms" },
                     {
                         "$match": {
                             "$expr": {
                                 "$and": [
-                                    { "$lte": [ "$terms.start", "$$vpStart" ] }, 
-                                    { "$lte": [ "$$vpEnd", "$terms.end" ] }, 
-                                    { "$eq": [ "$terms.party", "$$vpParty" ] } 
+                                    { "$eq": ["$terms.party", "$$vpParty"] },
+                                    { "$gte": ["$terms.start", "$$vpStart"] },
+                                    { "$lte": ["$terms.end", "$$vpEnd"] }
                                 ]
                             }
                         }
@@ -44,8 +36,10 @@ def execute():
                     {
                         "$project": {
                             "_id": 0,
-                            "name": {
-                                "$concat": ["$name.first", " ", "$name.last"]
+                            "name": { 
+                                "$concat": [
+                                    { "$trim": { "input": { "$concat": ["$name.first", " ", "$name.last"] } } }
+                                ]
                             }
                         }
                     }
@@ -53,21 +47,18 @@ def execute():
                 "as": "matchingLegislators"
             }
         },
-        {
-            "$match": {
-                "matchingLegislators": { "$ne": [] }
-            }
+        { 
+            "$match": { "matchingLegislators": { "$ne": [] } } 
+        },
+        { 
+            "$unwind": "$matchingLegislators" 
         },
         {
             "$group": {
-                "_id": {
-                    "name": {
-                        "$concat": ["$name.first", " ", "$name.last"]
-                    }
+                "_id": { 
+                    "name": { "$concat": ["$name.first", " ", "$name.last"] } 
                 },
-                "matchingLegislators": {
-                    "$addToSet": "$matchingLegislators.name"
-                }
+                "matchingLegislators": { "$addToSet": "$matchingLegislators.name" }
             }
         },
         {
