@@ -2,6 +2,7 @@ import app.utils as utils
 
 description = 'List presidents who had overlapping terms with legislators from the same state.'
 
+
 def execute():
     _, db = utils.get_mongo()
 
@@ -22,10 +23,10 @@ def execute():
                 "let": {
                     "prezState": "$terms.state",
                     "prezStart": {
-                        "$dateFromString": { "dateString": "$terms.start" }
+                        "$dateFromString": {"dateString": "$terms.start"}
                     },
                     "prezEnd": {
-                        "$dateFromString": { "dateString": "$terms.end" }
+                        "$dateFromString": {"dateString": "$terms.end"}
                     }
                 },
                 "pipeline": [
@@ -38,11 +39,11 @@ def execute():
                         "$match": {
                             "$expr": {
                                 "$and": [
-                                    { "$eq": ["$terms.state", "$$prezState"] },
+                                    {"$eq": ["$terms.state", "$$prezState"]},
                                     {
                                         "$lte": [
                                             {
-                                                "$dateFromString": { "dateString": "$terms.start" }
+                                                "$dateFromString": {"dateString": "$terms.start"}
                                             },
                                             "$$prezEnd"
                                         ]
@@ -50,7 +51,7 @@ def execute():
                                     {
                                         "$gte": [
                                             {
-                                                "$dateFromString": { "dateString": "$terms.end" }
+                                                "$dateFromString": {"dateString": "$terms.end"}
                                             },
                                             "$$prezStart"
                                         ]
@@ -64,12 +65,18 @@ def execute():
                             "_id": 0,
                             "legislator_name": {
                                 "$concat": [
-                                    "$name.first",
-                                    " ",
-                                    { "$ifNull": ["$name.middle", ""] },
-                                    " ",
-                                    "$name.last"
-                                ]
+                                    '$name.first',
+                                    {
+                                        "$cond": [
+                                            {"$ifNull": [
+                                                '$name.middle', False]},
+                                            {"$concat": [' ', '$name.middle']},
+                                            '',
+                                        ],
+                                    },
+                                    ' ',
+                                    '$name.last',
+                                ],
                             }
                         }
                     }
@@ -79,7 +86,7 @@ def execute():
         },
         {
             "$match": {
-                "overlapping_legislators": { "$ne": [] }
+                "overlapping_legislators": {"$ne": []}
             }
         },
         {
@@ -87,12 +94,17 @@ def execute():
                 "_id": 0,
                 "president_name": {
                     "$concat": [
-                        "$name.first",
-                        " ",
-                        { "$ifNull": ["$name.middle", ""] },
-                        " ",
-                        "$name.last"
-                    ]
+                        '$name.first',
+                        {
+                            "$cond": [
+                                {"$ifNull": ['$name.middle', False]},
+                                {"$concat": [' ', '$name.middle']},
+                                '',
+                            ],
+                        },
+                        ' ',
+                        '$name.last',
+                    ],
                 },
                 "state": "$terms.state",
                 "overlapping_legislators": 1

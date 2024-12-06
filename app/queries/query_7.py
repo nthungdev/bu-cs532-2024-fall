@@ -2,6 +2,7 @@ import app.utils as utils
 
 description = 'List all legislators who served in both the House and the Senate.'
 
+
 def execute():
     _, db = utils.get_mongo()
 
@@ -10,12 +11,17 @@ def execute():
             "$project": {
                 "name": {
                     "$concat": [
-                        "$name.first",
-                        " ",
-                        {"$ifNull": ["$name.middle", ""]},
-                        " ",
-                        "$name.last"
-                    ]
+                        '$name.first',
+                        {
+                            "$cond": [
+                                {"$ifNull": ['$name.middle', False]},
+                                {"$concat": [' ', '$name.middle']},
+                                '',
+                            ],
+                        },
+                        ' ',
+                        '$name.last',
+                    ],
                 },
                 "hasHouse": {
                     "$anyElementTrue": {

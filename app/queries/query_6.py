@@ -2,6 +2,7 @@ import app.utils as utils
 
 description = 'List presidents and vice presidents grouped by party affiliation.'
 
+
 def execute():
     _, db = utils.get_mongo()
 
@@ -18,12 +19,22 @@ def execute():
                             {"$eq": ["$terms.type", "prez"]},
                             {
                                 "$concat": [
-                                    "$name.first",
-                                    " ",
-                                    {"$ifNull": ["$name.middle", ""]},
-                                    " ",
-                                    "$name.last"
-                                ]
+                                    '$name.first',
+                                    {
+                                        "$cond": [
+                                            {
+                                                "$ifNull": [
+                                                    '$name.middle',
+                                                    False,
+                                                ],
+                                            },
+                                            {"$concat": [' ', '$name.middle']},
+                                            '',
+                                        ],
+                                    },
+                                    ' ',
+                                    '$name.last',
+                                ],
                             },
                             None
                         ]
@@ -35,12 +46,22 @@ def execute():
                             {"$eq": ["$terms.type", "viceprez"]},
                             {
                                 "$concat": [
-                                    "$name.first",
-                                    " ",
-                                    {"$ifNull": ["$name.middle", ""]},
-                                    " ",
-                                    "$name.last"
-                                ]
+                                    '$name.first',
+                                    {
+                                        "$cond": [
+                                            {
+                                                "$ifNull": [
+                                                    '$name.middle',
+                                                    False,
+                                                ],
+                                            },
+                                            {"$concat": [' ', '$name.middle']},
+                                            '',
+                                        ],
+                                    },
+                                    ' ',
+                                    '$name.last',
+                                ],
                             },
                             None
                         ]

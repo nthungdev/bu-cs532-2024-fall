@@ -2,6 +2,7 @@ import app.utils as utils
 
 description = 'Identify the longest-serving female legislator.'
 
+
 def execute():
     _, db = utils.get_mongo()
 
@@ -10,23 +11,28 @@ def execute():
             "$unwind": "$terms"
         },
         {
-            "$match": { "bio.gender": "F" }
+            "$match": {"bio.gender": "F"}
         },
         {
             "$project": {
                 "name": {
                     "$concat": [
-                        "$name.first",
-                        " ",
-                        { "$ifNull": ["$name.middle", ""] },
-                        " ",
-                        "$name.last"
-                    ]
+                        '$name.first',
+                        {
+                            "$cond": [
+                                {"$ifNull": ['$name.middle', False]},
+                                {"$concat": [' ', '$name.middle']},
+                                '',
+                            ],
+                        },
+                        ' ',
+                        '$name.last',
+                    ],
                 },
                 "duration": {
                     "$subtract": [
-                        { "$dateFromString": { "dateString": "$terms.end" } },
-                        { "$dateFromString": { "dateString": "$terms.start" } }
+                        {"$dateFromString": {"dateString": "$terms.end"}},
+                        {"$dateFromString": {"dateString": "$terms.start"}}
                     ]
                 }
             }
@@ -34,11 +40,11 @@ def execute():
         {
             "$group": {
                 "_id": "$name",
-                "totalDuration": { "$sum": "$duration" }
+                "totalDuration": {"$sum": "$duration"}
             }
         },
         {
-            "$sort": { "totalDuration": -1 }
+            "$sort": {"totalDuration": -1}
         },
         {
             "$limit": 1
