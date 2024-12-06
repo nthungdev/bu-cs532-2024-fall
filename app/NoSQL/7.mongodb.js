@@ -1,90 +1,52 @@
 use('project2')
 
-db.executives
-    .aggregate([
-        {
-            $unwind: '$terms',
-        },
-        {
-            $group: {
-                _id: '$terms.party',
-                presidents: {
-                    $addToSet: {
+db.legislators.aggregate([
+    {
+        $project: {
+            name: {
+                $concat: [
+                    '$name.first',
+                    {
                         $cond: [
-                            { $eq: ['$terms.type', 'prez'] },
-                            {
-                                $concat: [
-                                    '$name.first',
-                                    {
-                                        $cond: [
-                                            {
-                                                $ifNull: [
-                                                    '$name.middle',
-                                                    false,
-                                                ],
-                                            },
-                                            { $concat: [' ', '$name.middle'] },
-                                            '',
-                                        ],
-                                    },
-                                    ' ',
-                                    '$name.last',
-                                ],
-                            },
-                            null,
+                            { $ifNull: ['$name.middle', false] },
+                            { $concat: [' ', '$name.middle'] },
+                            '',
                         ],
                     },
-                },
-                vicePresidents: {
-                    $addToSet: {
-                        $cond: [
-                            { $eq: ['$terms.type', 'viceprez'] },
-                            {
-                                $concat: [
-                                    '$name.first',
-                                    {
-                                        $cond: [
-                                            {
-                                                $ifNull: [
-                                                    '$name.middle',
-                                                    false,
-                                                ],
-                                            },
-                                            { $concat: [' ', '$name.middle'] },
-                                            '',
-                                        ],
-                                    },
-                                    ' ',
-                                    '$name.last',
-                                ],
-                            },
-                            null,
-                        ],
-                    },
-                },
+                    ' ',
+                    '$name.last',
+                ],
             },
-        },
-        {
-            $project: {
-                _id: 1,
-                presidents: {
-                    $filter: {
-                        input: '$presidents',
-                        as: 'pres',
-                        cond: { $ne: ['$$pres', null] },
+            hasHouse: {
+                $anyElementTrue: {
+                    $map: {
+                        input: '$terms',
+                        as: 'term',
+                        in: { $eq: ['$$term.type', 'rep'] },
                     },
                 },
-                vicePresidents: {
-                    $filter: {
-                        input: '$vicePresidents',
-                        as: 'vp',
-                        cond: { $ne: ['$$vp', null] },
+            }, // Check if they served in the House
+            hasSenate: {
+                $anyElementTrue: {
+                    $map: {
+                        input: '$terms',
+                        as: 'term',
+                        in: { $eq: ['$$term.type', 'sen'] },
                     },
                 },
-            },
+            }, // Check if they served in the Senate
         },
-        {
-            $sort: { _id: 1 },
+    },
+    {
+        $match: {
+            hasHouse: true,
+            hasSenate: true,
         },
-    ])
-    .toArray()
+    },
+    {
+        $project: {
+            _id: 0,
+            name: 1,
+        },
+    },
+])
